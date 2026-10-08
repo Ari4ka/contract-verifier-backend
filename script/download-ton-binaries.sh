@@ -12,11 +12,12 @@ echo "Creating binaries directory at ${BINARIES_DIR}..."
 mkdir -p "${BINARIES_DIR}"
 
 echo "Fetching supported FunC versions from ${CONFIG_URL}..."
-VERSIONS=$(curl -sL "${CONFIG_URL}" | jq -r '.funcVersions[]')
+VERSIONS=$(curl -sL "${CONFIG_URL}" | jq -r '.funcVersions[]' 2>/dev/null)
 
+# Fallback to default versions if config fetch fails
 if [ -z "$VERSIONS" ]; then
-    echo "Error: No versions found in config"
-    exit 1
+    echo "Warning: Could not fetch versions from config, using fallback versions"
+    VERSIONS="0.4.4"
 fi
 
 echo "Found versions: $(echo $VERSIONS | tr '\n' ' ')"
